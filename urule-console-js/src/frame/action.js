@@ -30,6 +30,7 @@ export function createNewFile(newFileName,fileType,parentNodeData){
                     fullPath:path,
                     contextMenu:buildFileContextMenu()
                 };
+                debugger
                 buildData(newFileData,1);
                 dispatch({
                     parentNodeData,
@@ -240,6 +241,7 @@ export function loadData(classify,projectName,types,searchFileName) {
             type:'POST',
             data:{classify,projectName,types,searchFileName},
             success:function (data) {
+                // window.console.log(data);
                 const {classify,repo}=data;
                 const {rootFile,projectNames} = repo;
                 event.eventEmitter.emit(event.CHANGE_CLASSIFY,classify);
@@ -290,6 +292,9 @@ export function buildType(fileType) {
         case 'dt.xml':
             type='决策表';
             break;
+        case 'ct.xml':
+            type='交叉决策表';
+            break;
         case 'dts.xml':
             type='脚本式决策表';
             break;
@@ -315,6 +320,7 @@ export function buildType(fileType) {
 }
 
 function buildData(data,level) {
+    console.log(data)
     data._level=level++;
     switch (data.type){
         case "root":
@@ -473,6 +479,13 @@ function buildData(data,level) {
                     click:function () {
                         event.eventEmitter.emit(event.OPEN_CREATE_FILE_DIALOG,{fileType:'dt.xml',nodeData:data})
                     }
+                },
+                {
+                    name:'添加交叉决策表',
+                    icon:Styles.frameStyle.getDecisionTableIcon(),
+                    click:function () {
+                        event.eventEmitter.emit(event.OPEN_CREATE_FILE_DIALOG,{fileType:'ct.xml',nodeData:data})
+                    }
                 }
             ];
             /*
@@ -558,6 +571,12 @@ function buildData(data,level) {
             data._style=Styles.frameStyle.getDecisionTableIconStyle();
             data.contextMenu=buildFileContextMenu();
             data.editorPath="/decisiontableeditor";
+            break;
+        case "crosstab":
+            data._icon=Styles.frameStyle.getDecisionTableIcon();
+            data._style=Styles.frameStyle.getDecisionTableIconStyle();
+            data.contextMenu=buildFileContextMenu();
+            data.editorPath="/crosstabeditor";
             break;
         case "scriptDecisionTable":
             data._icon=Styles.frameStyle.getScriptDecisionTableIcon();
@@ -708,6 +727,13 @@ function buildFullContextMenu(isFolder,folderType){
                 click:function (data,dispatch) {
                     event.eventEmitter.emit(event.OPEN_CREATE_FILE_DIALOG,{fileType:'dt.xml',nodeData:data})
                 }
+            },
+            {
+                name:'添加交叉决策表',
+                icon:Styles.frameStyle.getDecisionTableIcon(),
+                click:function (data,dispatch) {
+                     event.eventEmitter.emit(event.OPEN_CREATE_FILE_DIALOG,{fileType:'ct.xml',nodeData:data})
+                 }
             }
         ]);
 /*        menus.push({

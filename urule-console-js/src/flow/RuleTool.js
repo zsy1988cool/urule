@@ -80,6 +80,8 @@ export default class RuleTool extends BaseTool{
                     editorPath+="/scorecardeditor";
                 }else if(extName==='rl.xml'){
                     editorPath+="/ruleflowdesigner";
+                }else if(extName==='ct.xml'){
+                    editorPath+="/crosstabeditor";
                 }
                 if(editorPath===window._server){
                     MsgBox.alert("无法打开文件["+self.file+"]");

@@ -106,5 +106,11 @@
 		<property name="repositoryBuilder" ref="urule.repositoryBuilder"></property>
 		<property name="permissionService" ref="urule.permissionService"></property>
 	</bean>
-	
+
+	<bean id="urule.crosstabEditorServletHandler" class="com.bstek.urule.console.servlet.crosstab.CrosstabEditorServletHandler">
+		<property name="repositoryService" ref="urule.repositoryService"></property>
+		<property name="crosstableDeserializer" ref="urule.crosstableDeserializer"></property>
+		<property name="commonServletHandler" ref="urule.commonServletHandler"></property>
+		<property name="dslRuleSetBuilder" ref="urule.dslRuleSetBuilder"></property>
+	</bean>
 </beans>

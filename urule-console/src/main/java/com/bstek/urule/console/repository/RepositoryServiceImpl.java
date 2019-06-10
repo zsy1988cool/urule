@@ -317,7 +317,7 @@ public class RepositoryServiceImpl extends BaseRepositoryService implements Repo
 			fileTypes = new FileType[] { FileType.VariableLibrary,
 					FileType.ParameterLibrary, FileType.ConstantLibrary,
 					FileType.ActionLibrary, FileType.Ruleset,
-					FileType.RuleFlow, FileType.DecisionTable,
+					FileType.RuleFlow, FileType.DecisionTable,FileType.Crosstab,
 					FileType.DecisionTree, FileType.ScriptDecisionTable,
 					FileType.UL,FileType.Scorecard };			
 		}
@@ -368,7 +368,7 @@ public class RepositoryServiceImpl extends BaseRepositoryService implements Repo
 		
 		FileType[] libraryDecisionTypes = types;
 		if(types==null || types.length==0){
-			libraryDecisionTypes = new FileType[] { FileType.DecisionTable, FileType.ScriptDecisionTable };
+			libraryDecisionTypes = new FileType[] { FileType.DecisionTable, FileType.ScriptDecisionTable, FileType.Crosstab };
 		}
 		FileType[] libraryDecisionTreeTypes = types;
 		if(types==null || types.length==0){
@@ -437,7 +437,8 @@ public class RepositoryServiceImpl extends BaseRepositoryService implements Repo
 				}
 				
 				if(libType.equals(LibType.decisiontable)){
-					if(!fileType.equals(FileType.ScriptDecisionTable) && !fileType.equals(FileType.DecisionTable)) {
+					if(!fileType.equals(FileType.ScriptDecisionTable) && !fileType.equals(FileType.DecisionTable)
+							&& !fileType.equals(FileType.Crosstab)) {
 						continue;
 					}
 				}
@@ -492,6 +493,8 @@ public class RepositoryServiceImpl extends BaseRepositoryService implements Repo
 					file.setType(Type.decisionTree);
 				} else if (name.toLowerCase().endsWith(FileType.Scorecard.toString())) {
 					file.setType(Type.scorecard);
+				} else if (name.toLowerCase().endsWith(FileType.Crosstab.toString())) {
+					file.setType(Type.crosstab);
 				}
 				file.setFullPath(fileNode.getPath());
 				file.setName(name);

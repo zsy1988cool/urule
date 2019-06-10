@@ -33,6 +33,10 @@ public enum FileType {
 		public String toString() {
 			return "dt.xml";
 		}
+	},Crosstab {
+		public String toString() {
+			return "ct.xml";
+		}
 	},ScriptDecisionTable{
 		@Override
 		public String toString() {
@@ -73,6 +77,10 @@ public enum FileType {
 		public String toString() {
 			return "dtree.xml";
 		}
+	},ComplexScorecard {
+		public String toString() {
+			return "scc";
+		}
 	},Scorecard{
 		@Override
 		public String toString() {
@@ -110,6 +118,8 @@ public enum FileType {
 			return FileType.Scorecard;
 		}else if(type.equals("DIR")){
 			return FileType.DIR;
+		}else if(type.equals("ct.xml")){
+			return FileType.Crosstab;
 		}else{
 			throw new RuleException("Unknow type:"+type);
 		}

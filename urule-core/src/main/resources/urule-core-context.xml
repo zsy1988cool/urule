@@ -26,6 +26,7 @@
 		<property name="decisionTableRulesBuilder" ref="urule.decisionTableRulesBuilder"></property>
 		<property name="dslRuleSetBuilder" ref="urule.dslRuleSetBuilder"></property>
 		<property name="decisionTreeRulesBuilder" ref="urule.decisionTreeRulesBuilder"></property>
+		<property name="crosstabRulesBuilder" ref="urule.crosstabRulesBuilder"></property>
 	</bean>
 	
 	<bean id="urule.builtInActionLibraryBuilder" class="com.bstek.urule.runtime.BuiltInActionLibraryBuilder"></bean>
@@ -380,5 +381,34 @@
 	<bean id="urule.decisionTreeResourceBuilder" class="com.bstek.urule.builder.resource.DecisionTreeResourceBuilder">
 		<property name="decisionTreeDeserializer" ref="urule.decisionTreeDeserializer"></property>
 	</bean>
+
+	<bean id="urule.crosstableDeserializer" class="com.bstek.urule.parse.deserializer.CrosstableDeserializer">
+		<property name="crosstabParser" ref="urule.crosstabParser"></property>
+	</bean>
+
+	<bean id="urule.crosstabResourceBuilder" class="com.bstek.urule.builder.resource.CrosstabResourceBuilder">
+		<property name="crosstableDeserializer" ref="urule.crosstableDeserializer"></property>
+	</bean>
+
+	<bean id="urule.crosstabParser" class="com.bstek.urule.parse.crosstab.CrosstabParser">
+		<property name="crossRowParser" ref="urule.crossRowParser"></property>
+		<property name="crossColumnParser" ref="urule.crossColumnParser"></property>
+		<property name="headerCellParser" ref="urule.headerCellParser"></property>
+		<property name="conditionCrossCellParser" ref="urule.conditionCrossCellParser"></property>
+		<property name="valueCrossCellParser" ref="urule.valueCrossCellParser"></property>
+	</bean>
+
+	<bean id="urule.crossRowParser" class="com.bstek.urule.parse.crosstab.CrossRowParser"></bean>
+	<bean id="urule.crossColumnParser" class="com.bstek.urule.parse.crosstab.CrossColumnParser"></bean>
+	<bean id="urule.headerCellParser" class="com.bstek.urule.parse.crosstab.HeaderCellParser"></bean>
+	<bean id="urule.conditionCrossCellParser" class="com.bstek.urule.parse.crosstab.ConditionCrossCellParser">
+		<property name="jointParser" ref="urule.jointParser"></property>
+	</bean>
+	<bean id="urule.valueCrossCellParser" class="com.bstek.urule.parse.crosstab.ValueCrossCellParser">
+		<property name="valueParser" ref="urule.valueParser"></property>
+	</bean>
+
+	<bean id="urule.crosstabRulesBuilder" class="com.bstek.urule.builder.table.CrosstabRulesBuilder"></bean>
+
 	
 </beans>

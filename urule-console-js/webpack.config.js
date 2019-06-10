@@ -5,6 +5,7 @@
 const path=require('path');
 module.exports={
     mode:'development',
+    devtool: 'source-map',
     entry: {
         frame:'./src/frame/index.jsx',
         variableEditor:'./src/variable/index.jsx',
@@ -15,9 +16,10 @@ module.exports={
         flowDesigner:'./src/flow/index.jsx',
         ruleSetEditor:'./src/editor/urule/index.jsx',
         decisionTableEditor:'./src/editor/decisiontable/index.jsx',
+        crossTabEditor: './src/editor/crosstabeditor/index.jsx',
         scriptDecisionTableEditor:'./src/editor/scriptdecisiontable/index.jsx',
         decisionTreeEditor:'./src/editor/decisiontree/index.jsx',
-        clientConfigEditor:'./src/client/index.jsx',
+        //clientConfigEditor:'./src/client/index.jsx',
         ulEditor:'./src/editor/ul/index.jsx',
         scoreCardTable:'./src/scorecard/index.jsx',
         permissionConfigEditor:'./src/permission/index.jsx'

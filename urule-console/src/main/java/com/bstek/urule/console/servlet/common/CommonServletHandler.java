@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.bstek.urule.parse.deserializer.*;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.apache.commons.lang.StringUtils;
@@ -50,16 +51,6 @@ import com.bstek.urule.dsl.RuleParserParser;
 import com.bstek.urule.model.function.FunctionDescriptor;
 import com.bstek.urule.model.library.action.ActionLibrary;
 import com.bstek.urule.model.library.action.SpringBean;
-import com.bstek.urule.parse.deserializer.ActionLibraryDeserializer;
-import com.bstek.urule.parse.deserializer.ConstantLibraryDeserializer;
-import com.bstek.urule.parse.deserializer.DecisionTableDeserializer;
-import com.bstek.urule.parse.deserializer.DecisionTreeDeserializer;
-import com.bstek.urule.parse.deserializer.Deserializer;
-import com.bstek.urule.parse.deserializer.ParameterLibraryDeserializer;
-import com.bstek.urule.parse.deserializer.RuleSetDeserializer;
-import com.bstek.urule.parse.deserializer.ScorecardDeserializer;
-import com.bstek.urule.parse.deserializer.ScriptDecisionTableDeserializer;
-import com.bstek.urule.parse.deserializer.VariableLibraryDeserializer;
 import com.bstek.urule.runtime.BuiltInActionLibraryBuilder;
 
 /**
@@ -209,7 +200,7 @@ public class CommonServletHandler extends RenderPageServletHandler{
 				types[i]=FileType.valueOf(fileTypes[i]);
 			}
 		}else{
-			types=new FileType[]{FileType.UL,FileType.Ruleset,FileType.RuleFlow,FileType.DecisionTable,FileType.ScriptDecisionTable,FileType.DecisionTree,FileType.Scorecard};
+			types=new FileType[]{FileType.UL,FileType.Ruleset,FileType.RuleFlow,FileType.DecisionTable,FileType.Crosstab,FileType.ScriptDecisionTable,FileType.DecisionTree,FileType.Scorecard};
 		}
 		try{
 			Repository repo=repositoryService.loadRepository(project,user,false,types,searchFileName);	
@@ -338,6 +329,7 @@ public class CommonServletHandler extends RenderPageServletHandler{
 		ConstantLibraryDeserializer constantLibraryDeserializer=(ConstantLibraryDeserializer)applicationContext.getBean(ConstantLibraryDeserializer.BEAN_ID);
 		RuleSetDeserializer ruleSetDeserializer=(RuleSetDeserializer)applicationContext.getBean(RuleSetDeserializer.BEAN_ID);
 		DecisionTableDeserializer decisionTableDeserializer=(DecisionTableDeserializer)applicationContext.getBean(DecisionTableDeserializer.BEAN_ID);
+		CrosstableDeserializer crosstableDeserializer = (CrosstableDeserializer)applicationContext.getBean(CrosstableDeserializer.BEAN_ID);
 		ScriptDecisionTableDeserializer scriptDecisionTableDeserializer=(ScriptDecisionTableDeserializer)applicationContext.getBean(ScriptDecisionTableDeserializer.BEAN_ID);
 		DecisionTreeDeserializer decisionTreeDeserializer=(DecisionTreeDeserializer)applicationContext.getBean(DecisionTreeDeserializer.BEAN_ID);
 		ScorecardDeserializer scorecardDeserializer=(ScorecardDeserializer)applicationContext.getBean(ScorecardDeserializer.BEAN_ID);
@@ -352,6 +344,7 @@ public class CommonServletHandler extends RenderPageServletHandler{
 		deserializers.add(decisionTreeDeserializer);
 		deserializers.add(parameterLibraryDeserializer);
 		deserializers.add(scorecardDeserializer);
+		deserializers.add(crosstableDeserializer);
 		
 		Collection<FunctionDescriptor> coll=applicationContext.getBeansOfType(FunctionDescriptor.class).values();
 		for(FunctionDescriptor fun:coll){

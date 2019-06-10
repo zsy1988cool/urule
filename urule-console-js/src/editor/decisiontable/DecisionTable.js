@@ -109,6 +109,7 @@ window._setDirty=function(){
 		});
 
 		$("#addCriteriaButton").click(function(){
+			debugger
 			var cellData=self.getCurrentCellData(),
 				row=cellData.row+cellData.rowspan,
 				col=cellData.col;
@@ -224,6 +225,7 @@ window._setDirty=function(){
 			"outsideClickDeselects":false,
 			"colWidths":120
 		};
+		debugger
 		table=$("<div style='margin-left:15px'></div>");
 		container.append(table);
 		

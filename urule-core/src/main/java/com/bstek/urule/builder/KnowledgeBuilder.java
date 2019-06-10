@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.bstek.urule.builder.table.CrosstabRulesBuilder;
+import com.bstek.urule.model.crosstab.CrosstabDefinition;
 import org.dom4j.Element;
 
 import com.bstek.urule.builder.resource.Resource;
@@ -57,6 +59,7 @@ public class KnowledgeBuilder extends AbstractBuilder{
 	private DecisionTableRulesBuilder decisionTableRulesBuilder;
 	private ScriptDecisionTableRulesBuilder scriptDecisionTableRulesBuilder;
 	private DSLRuleSetBuilder dslRuleSetBuilder;
+	private CrosstabRulesBuilder crosstabRulesBuilder;
 	public static final String BEAN_ID="urule.knowledgeBuilder";
 	public KnowledgeBase buildKnowledgeBase(ResourceBase resourceBase) throws IOException{
 		KnowledgePackageService knowledgePackageService=(KnowledgePackageService)applicationContext.getBean(KnowledgePackageService.BEAN_ID);
@@ -105,7 +108,12 @@ public class KnowledgeBuilder extends AbstractBuilder{
 					addToLibraryMap(libMap,table.getLibraries());
 					List<Rule> tableRules=decisionTableRulesBuilder.buildRules(table);
 					rules.addAll(tableRules);
-				}else if(type.equals(ResourceType.ScriptDecisionTable)){
+				}else if (type.equals(ResourceType.CrossDecisionTable)) {
+					CrosstabDefinition table = (CrosstabDefinition)object;
+					this.addToLibraryMap(libMap, table.getLibraries());
+					List<Rule> tableRules = this.crosstabRulesBuilder.buildRules(table);
+					rules.addAll(tableRules);
+				} else if(type.equals(ResourceType.ScriptDecisionTable)){
 					ScriptDecisionTable table=(ScriptDecisionTable)object;
 					RuleSet ruleSet=scriptDecisionTableRulesBuilder.buildRules(table);
 					addToLibraryMap(libMap,ruleSet.getLibraries());
@@ -213,5 +221,8 @@ public class KnowledgeBuilder extends AbstractBuilder{
 	}
 	public void setDecisionTreeRulesBuilder(DecisionTreeRulesBuilder decisionTreeRulesBuilder) {
 		this.decisionTreeRulesBuilder = decisionTreeRulesBuilder;
+	}
+	public void setCrosstabRulesBuilder(CrosstabRulesBuilder crosstabRulesBuilder) {
+		this.crosstabRulesBuilder = crosstabRulesBuilder;
 	}
 }

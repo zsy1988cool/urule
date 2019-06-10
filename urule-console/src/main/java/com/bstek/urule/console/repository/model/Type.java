@@ -20,5 +20,5 @@ package com.bstek.urule.console.repository.model;
  * @since 2016年5月26日
  */
 public enum Type {
-	root, project, resource, resourcePackage, lib, action, parameter, constant, variable, ruleLib, decisionTableLib, decisionTreeLib, scorecardLib,flowLib, scorecard,rule, ul, decisionTable, scriptDecisionTable, decisionTree, flow, all, folder;
+	root, project, resource, resourcePackage, lib, action, parameter, constant, variable, ruleLib, decisionTableLib, decisionTreeLib, scorecardLib,flowLib, scorecard,rule, ul, decisionTable, crosstab, scriptDecisionTable, decisionTree, flow, all, folder;
 }
