@@ -61751,6 +61751,7 @@ window._setDirty = function () {
         this.remark = new Remark(remarkContainer);
 
         this.properties = [];
+        this.targetProperty = {};
 
         var propContainer = $("<div style='margin:5px 5px 5px 15px;border: solid 1px #dddddd;border-radius:5px'></div>");
         container.append(propContainer);
@@ -61899,13 +61900,22 @@ window._setDirty = function () {
             }
         }
 
-        table = $("<input id='xmlcontent' style='margin-left:15px'></input>");
-        container.append(table);
+        //table=$("<input id='xmlcontent' style='margin-left:15px'></input>");
+        var targetContainer = $("<div style='margin-left: 15px;'></div>");
+        container.append(targetContainer);
+        var targetLabel = $("<span style='color: #747474;'>选择交叉单元格值要赋予的对象：</span>");
+        targetContainer.append(targetLabel);
+        targetContainer.append($("<span style='height: 20px; cursor: pointer; margin: 0px; color: rgb(255, 255, 255); border: 1px dashed transparent;'></span>"));
+
+        var targetValueContainer = $("<span>");
+        targetContainer.append(targetValueContainer);
+        this.targetValue = $("<span style='height: 20px; cursor: pointer; margin: 0px; color: darkcyan; border: 1px dashed transparent;'></span>");
+        targetValueContainer.append(this.targetValue);
 
         self.load(function (decisionTable) {
             console.log(decisionTable);
             var xml = JSON.stringify(decisionTable);
-            $("#xmlcontent").text(xml);
+            //$("#xmlcontent").text(xml);
         });
         window.ht = self;
         var config = {
@@ -61926,82 +61936,48 @@ window._setDirty = function () {
             "outsideClickDeselects": false,
             "colWidths": 120
         };
+        debugger;
+        table = $("<div style='margin-left:15px'></div>");
+        container.append(table);
+        table.handsontable(config);
+        self._handsontable = table.handsontable("getInstance");
+        self._handsontable.ht = self;
 
-        //table.handsontable(config);
-        //self._handsontable=table.handsontable("getInstance");
-        //self._handsontable.ht=self;
-        // config.colHeaders=function(col){
-        //     var column=self.getColData(col),
-        //         type=column.type,
-        //         category=column.variableCategory=="parameter"?"参数":column.variableCategory,
-        //         variable=column.variableLabel,
-        //         width=column.width,
-        //         title=category+"."+variable,
-        //         icon,iconClass;
-        //     self.setColWidth(col,width);
-        //     if(!category||!variable){
-        //         title="";
-        //     }
-        //     if(type=="Criteria"){
-        //         iconClass="glyphicon glyphicon-filter";
-        //         icon="glyphicon glyphicon-filter";
-        //     }else if(type=="ExecuteMethod"){
-        //         title="执行方法";
-        //         iconClass="glyphicon glyphicon-flash";
-        //     }else if(type=="Assignment"){
-        //         iconClass="glyphicon glyphicon-tasks";
-        //     }else if(type=="ConsolePrint"){
-        //         title="控制台输出";
-        //         iconClass="glyphicon glyphicon-print";
-        //     }
-        //     return "<i class='"+iconClass+"' style='line-height:21px;'></i> "+title;
-        // };
-        // config.rowHeaders=function(row){
-        //     var rowData=self.getRowData(row),
-        //         height=rowData.height;
-        //     self.setRowHeight(row,height);
-        //     return row+1;
-        // };
-        // config.cells=function(row,col,prop){
-        //     return {
-        //         readOnly:true
-        //     };
-        // };
-        // self.updateSettings(config);
-        // self.renderCells();
-        //
-        // self.addHook("afterSelectionEnd",function(){
-        //     var colData=self.getCurrentColData(),
-        //         rowData=self.getCurrentRowData(),
-        //         cellData=self.getCurrentCellData();
-        //
-        //     if(colData.type=="Criteria"){
-        //         $("#addCriteriaButton").removeClass("disabled");
-        //     }else{
-        //         $("#addCriteriaButton").addClass("disabled");
-        //     }
-        // });
-        //
-        // self.addHook("beforeColumnResize",function(col,size){
-        //     var colData=self.getColData(col);
-        //     colData.width=size;
-        //     self.setDirty();
-        //     self.invoke("render")
-        // });
-        //
-        // self.addHook("beforeRowResize",function(row,size){
-        //     var rowData=self.getRowData(row);
-        //     rowData.height=size;
-        //     self.setDirty();
-        // });
+        config.colHeaders = function (col) {
+            var column = self.getColData(col),
+                type = column.type,
+                category = column.variableCategory == "parameter" ? "参数" : column.variableCategory,
+                variable = column.variableLabel,
 
-        // self.addHook("afterRender",function(){
-        //     $(".htCore tr").each(function(){
-        //         $(this).children().css({"border-right-width":""});
-        //         $(this).children().eq(self.countCriteriaCols()).css({"border-right-width":"4px"});
-        //     });
-        //
-        // });
+            //width=column.width,
+            title = category + "." + variable,
+                icon,
+                iconClass;
+            //self.setColWidth(col,width);
+            if (!category || !variable) {
+                title = "";
+            }
+            if (type == "left") {
+                iconClass = "glyphicon glyphicon-filter";
+                icon = "glyphicon glyphicon-filter";
+            } else if (type == "top") {
+                iconClass = "glyphicon glyphicon-flash";
+            }
+            return "<i class='" + iconClass + "' style='line-height:21px;'></i> " + title;
+        };
+        config.rowHeaders = function (row) {
+            // var rowData=self.getRowData(row),
+            //     height=30;//rowData.height;
+            //self.setRowHeight(row,height);
+            return row + 1;
+        };
+        config.cells = function (row, col, prop) {
+            return {
+                readOnly: true
+            };
+        };
+        self.updateSettings(config);
+
         self.initMenu();
         self.resetState();
         table.find(".handsontable").remove();
@@ -62014,8 +61990,11 @@ window._setDirty = function () {
             this.properties.push(property);
             window._setDirty();
         },
-        updateSettings: function updateSettings(options) {
-            //this._handsontable.updateSettings(options);
+        setTargetProperty: function setTargetProperty(property) {
+            debugger;
+            var targetLabel = property.assignVariableCategory + '.' + property.assignVariableLabel;
+            this.targetValue.text(targetLabel);
+            this.targetProperty = property;
         },
         invoke: function invoke(methodName, args) {
             // if(methodName=="render"){
@@ -62033,6 +62012,10 @@ window._setDirty = function () {
 
         getInstance: function getInstance() {
             return this._handsontable;
+        },
+
+        updateSettings: function updateSettings(options) {
+            this._handsontable.updateSettings(options);
         },
 
         setDirty: function setDirty() {
@@ -62129,18 +62112,20 @@ window._setDirty = function () {
         },
 
         getColData: function getColData(col) {
+            var num = col + 1;
             var colDatas = this.getColDatas();
             for (var i = 0; i < colDatas.length; i++) {
-                if (colDatas[i].num == col) {
+                if (colDatas[i].columnNumber == num) {
                     return colDatas[i];
                 }
             }
         },
 
         getRowData: function getRowData(row) {
+            var num = row + 1;
             var rowDatas = this.getRowDatas();
             for (var i = 0; i < rowDatas.length; i++) {
-                if (rowDatas[i].num == row) {
+                if (rowDatas[i].rowNumber == num) {
                     return rowDatas[i];
                 }
             }
@@ -62504,6 +62489,16 @@ window._setDirty = function () {
                         self.addProperty(new urule.RuleProperty(self, "debug", debug, 3));
                     }
 
+                    debugger;
+                    var assignVariableCategory = decisionTable["assignVariableCategory"];
+                    if (assignVariableCategory != null) {
+                        var assignVariable = decisionTable["assignVariable"] || null;
+                        var assignTargetType = decisionTable["assignTargetType"] || null;
+                        var assignVariableLabel = decisionTable["assignVariableLabel"] || null;
+                        var assignDatatype = decisionTable["assignDatatype"] || null;
+                        self.setTargetProperty(new urule.TargetProperty(assignTargetType, assignVariableCategory, assignVariable, assignVariableLabel, assignDatatype));
+                    }
+
                     var libraries = decisionTable.libraries || [];
                     $.each(libraries, function (index, library) {
                         var type, path;
@@ -62814,6 +62809,26 @@ window._setDirty = function () {
 
 /***/ }),
 
+/***/ "./src/editor/crosstabeditor/TargetProperty.js":
+/*!*****************************************************!*\
+  !*** ./src/editor/crosstabeditor/TargetProperty.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+urule.TargetProperty = function (assignTargetType, assignVariableCategory, assignVariable, assignVariableLabel, assignDatatype) {
+    this.assignTargetType = assignTargetType;
+    this.assignVariableCategory = assignVariableCategory;
+    this.assignVariable = assignVariable;
+    this.assignVariableLabel = assignVariableLabel;
+    this.assignDatatype = assignDatatype;
+};
+
+/***/ }),
+
 /***/ "./src/editor/crosstabeditor/index.jsx":
 /*!*********************************************!*\
   !*** ./src/editor/crosstabeditor/index.jsx ***!
@@ -62914,6 +62929,10 @@ __webpack_require__(/*! ../urule/Rule.js */ "./src/editor/urule/Rule.js");
 
 __webpack_require__(/*! ./CrossTable.js */ "./src/editor/crosstabeditor/CrossTable.js");
 
+__webpack_require__(/*! ./renderers.js */ "./src/editor/crosstabeditor/renderers.js");
+
+__webpack_require__(/*! ./TargetProperty.js */ "./src/editor/crosstabeditor/TargetProperty.js");
+
 var _KnowledgeTreeDialog = __webpack_require__(/*! ../../components/dialog/component/KnowledgeTreeDialog.jsx */ "./src/components/dialog/component/KnowledgeTreeDialog.jsx");
 
 var _KnowledgeTreeDialog2 = _interopRequireDefault(_KnowledgeTreeDialog);
@@ -62932,6 +62951,75 @@ $(document).ready(function () {
     _reactDom2.default.render(_react2.default.createElement(_KnowledgeTreeDialog2.default, null), document.getElementById('dialogContainer'));
     new URule.CrossTable('container');
 });
+
+/***/ }),
+
+/***/ "./src/editor/crosstabeditor/renderers.js":
+/*!************************************************!*\
+  !*** ./src/editor/crosstabeditor/renderers.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+(function (Handsontable) {
+	'use strict';
+
+	var URuleRenderer = function URuleRenderer(instance, TD, row, col, prop, value, cellProperties) {
+		Handsontable.renderers.cellDecorator.apply(this, arguments);
+		if (!value && cellProperties.placeholder) {
+			value = cellProperties.placeholder;
+		}
+		var cellData = ht.getCellData(row, col),
+		    content;
+		applySpanProperties(TD, cellData);
+		if (!cellData) {
+			return;
+		}
+		cellData.container = TD;
+		content = ht.getCellContent(cellData);
+		if (content instanceof urule.CellCondition) {
+			$(TD).empty();
+
+			//$(TD).css("background-color","rgb(253, 252, 233)");
+			var disContainer = content.getDisplayContainer();
+			$(TD).append($("<div/>").append(disContainer));
+		} else if (content instanceof urule.CellContent) {
+			//$(TD).append(content.inputType.getContainer());
+		} else {
+				//$(TD).append(content.container);
+			}
+	};
+
+	var applySpanProperties = function applySpanProperties(TD, cellData) {
+		if (cellData) {
+			var rowspan = cellData.rowspan;
+			TD.style.display = "table-cell";
+			if (rowspan > 1) {
+				TD.setAttribute('rowspan', rowspan);
+			} else {
+				TD.removeAttribute('rowspan');
+			}
+		} else {
+			TD.style.display = "none";
+			TD.removeAttribute('rowspan');
+			TD.removeAttribute('colspan');
+		}
+	};
+
+	Handsontable.renderers.URuleRenderer = URuleRenderer;
+	Handsontable.renderers.registerRenderer('urule', URuleRenderer);
+})(Handsontable);
+
+(function () {
+	Handsontable.URuleCell = {
+		editor: Handsontable.editors.TextEditor,
+		renderer: Handsontable.renderers.URuleRenderer
+	};
+	Handsontable.cellTypes.urule = Handsontable.URuleCell;
+})();
 
 /***/ }),
 

@@ -44,6 +44,8 @@ import '../table/manualColumnResize.js';
 import '../table/manualRowResize.js';
 import '../urule/Rule.js';
 import './CrossTable.js';
+import './renderers.js';
+import './TargetProperty.js';
 
 import KnowledgeTreeDialog from '../../components/dialog/component/KnowledgeTreeDialog.jsx';
 import React from 'react';

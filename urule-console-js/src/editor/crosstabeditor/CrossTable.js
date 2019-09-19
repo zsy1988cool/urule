@@ -57,6 +57,7 @@ window._setDirty=function(){
         this.remark=new Remark(remarkContainer);
 
         this.properties=[];
+        this.targetProperty={};
 
         var propContainer=$("<div style='margin:5px 5px 5px 15px;border: solid 1px #dddddd;border-radius:5px'></div>");
         container.append(propContainer);
@@ -205,13 +206,22 @@ window._setDirty=function(){
             }
         }
 
-        table=$("<input id='xmlcontent' style='margin-left:15px'></input>");
-        container.append(table);
+        //table=$("<input id='xmlcontent' style='margin-left:15px'></input>");
+        var targetContainer = $("<div style='margin-left: 15px;'></div>");
+        container.append(targetContainer);
+        var targetLabel = $("<span style='color: #747474;'>选择交叉单元格值要赋予的对象：</span>");
+        targetContainer.append(targetLabel);
+        targetContainer.append($("<span style='height: 20px; cursor: pointer; margin: 0px; color: rgb(255, 255, 255); border: 1px dashed transparent;'></span>"));
+
+        var targetValueContainer = $("<span>");
+        targetContainer.append(targetValueContainer);
+        this.targetValue = $("<span style='height: 20px; cursor: pointer; margin: 0px; color: darkcyan; border: 1px dashed transparent;'></span>");
+        targetValueContainer.append(this.targetValue);
 
         self.load(function (decisionTable) {
             console.log(decisionTable);
             let xml = JSON.stringify(decisionTable);
-            $("#xmlcontent").text(xml);
+            //$("#xmlcontent").text(xml);
         });
         window.ht=self;
         var config={
@@ -232,6 +242,46 @@ window._setDirty=function(){
             "outsideClickDeselects":false,
             "colWidths":120
         };
+        debugger
+        table=$("<div style='margin-left:15px'></div>");
+        container.append(table);
+        table.handsontable(config);
+        self._handsontable=table.handsontable("getInstance");
+        self._handsontable.ht=self;
+
+        config.colHeaders=function(col){
+            var column=self.getColData(col),
+                type=column.type,
+                category=column.variableCategory=="parameter"?"参数":column.variableCategory,
+                variable=column.variableLabel,
+                //width=column.width,
+                title=category+"."+variable,
+                icon,iconClass;
+            //self.setColWidth(col,width);
+            if(!category||!variable){
+                title="";
+            }
+            if(type=="left"){
+                iconClass="glyphicon glyphicon-filter";
+                icon="glyphicon glyphicon-filter";
+            }else if(type=="top"){
+                iconClass="glyphicon glyphicon-flash";
+            }
+            return "<i class='"+iconClass+"' style='line-height:21px;'></i> "+title;
+        };
+        config.rowHeaders=function(row){
+            // var rowData=self.getRowData(row),
+            //     height=30;//rowData.height;
+            //self.setRowHeight(row,height);
+            return row+1;
+        };
+        config.cells=function(row,col,prop){
+            return {
+                readOnly:true
+            };
+        };
+        self.updateSettings(config);
+
         self.initMenu();
         self.resetState();
         table.find(".handsontable").remove();
@@ -243,6 +293,12 @@ window._setDirty=function(){
             this.propertyContainer.append(property.getContainer());
             this.properties.push(property);
             window._setDirty();
+        },
+        setTargetProperty:function (property) {
+            debugger
+            var targetLabel = `${property.assignVariableCategory}.${property.assignVariableLabel}`;
+            this.targetValue.text(targetLabel);
+            this.targetProperty = property;
         },
         invoke:function(methodName,args){
             // if(methodName=="render"){
@@ -260,6 +316,10 @@ window._setDirty=function(){
 
         getInstance:function(){
             return this._handsontable;
+        },
+
+        updateSettings:function(options){
+            this._handsontable.updateSettings(options);
         },
 
         setDirty:function(){
@@ -358,18 +418,20 @@ window._setDirty=function(){
         },
 
         getColData:function(col){
+            var num = col+1;
             var colDatas=this.getColDatas();
             for(var i=0;i<colDatas.length;i++){
-                if(colDatas[i].num==col){
+                if(colDatas[i].columnNumber==num){
                     return colDatas[i];
                 }
             }
         },
 
         getRowData:function(row){
+            var num = row+1;
             var rowDatas=this.getRowDatas();
             for(var i=0;i<rowDatas.length;i++){
-                if(rowDatas[i].num==row){
+                if(rowDatas[i].rowNumber==num){
                     return rowDatas[i];
                 }
             }
@@ -788,6 +850,16 @@ window._setDirty=function(){
                     var debug=decisionTable["debug"];
                     if(debug!=null){
                         self.addProperty(new urule.RuleProperty(self,"debug",debug,3));
+                    }
+
+                    debugger
+                    var assignVariableCategory = decisionTable["assignVariableCategory"];
+                    if(assignVariableCategory != null) {
+                        var assignVariable = decisionTable["assignVariable"]||null;
+                        var assignTargetType = decisionTable["assignTargetType"]||null;
+                        var assignVariableLabel = decisionTable["assignVariableLabel"]||null;
+                        var assignDatatype = decisionTable["assignDatatype"]||null;
+                        self.setTargetProperty(new urule.TargetProperty(assignTargetType, assignVariableCategory, assignVariable, assignVariableLabel, assignDatatype));
                     }
 
                     var libraries=decisionTable.libraries||[];
